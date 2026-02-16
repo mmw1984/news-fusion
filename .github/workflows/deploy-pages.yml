@@ -26,21 +26,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-
-      - name: Cache npm and build artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            node_modules
-            web/node_modules
-            web/.nuxt
-            web/.vite
-            web/.cache
-          key: ${{ runner.os }}-news-fusion-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-news-fusion-
 
       - name: Fast: build single-file HTML (no deps)
         run: |

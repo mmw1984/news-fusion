@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Fast: build single-file HTML (no deps)
+      - name: Fast build single-file HTML (no deps)
         run: |
           node --version
           node scripts/build-singlefile.mjs

@@ -1,0 +1,7 @@
+[
+  { "id": "9to5google", "name": "9to5Google", "domains": ["9to5google.com"] },
+  { "id": "androidpolice", "name": "Android Police", "domains": ["androidpolice.com"] },
+  { "id": "theverge", "name": "The Verge", "domains": ["theverge.com"] },
+  { "id": "techcrunch", "name": "TechCrunch", "domains": ["techcrunch.com"] },
+  { "id": "other", "name": "Other", "domains": [] }
+]

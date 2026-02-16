@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { DEFAULT_CATEGORY, isManualCategoryValid } from './manual-categories';
+import { detectSourceId, getSourceNameById } from './manual-sources';
 import type { Article } from './types';
 
 type ParsedFrontmatter = Record<string, string>;
@@ -77,6 +78,12 @@ function toArticle(filePath: string, raw: string): Article | null {
 		? category
 		: DEFAULT_CATEGORY;
 
+	const source = detectSourceId({
+		frontmatterSource: frontmatter.source,
+		sourceUrl,
+		sourceName: frontmatter.sourceName,
+	});
+
 	const publishedAt = dayjs(frontmatter.publishedAt).isValid()
 		? dayjs(frontmatter.publishedAt).toISOString()
 		: dayjs().toISOString();
@@ -92,9 +99,13 @@ function toArticle(filePath: string, raw: string): Article | null {
 		summary,
 		thumbnail: frontmatter.thumbnail || null,
 		category: normalizedCategory,
+		source,
 		publishedAt,
 		createdAt: publishedAt,
-		publisher: frontmatter.sourceName || new URL(sourceUrl).hostname,
+		publisher:
+			frontmatter.sourceName ||
+			getSourceNameById(source) ||
+			new URL(sourceUrl).hostname,
 		content: body,
 	};
 }

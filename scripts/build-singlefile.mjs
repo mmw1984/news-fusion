@@ -2,7 +2,18 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 const CONTENT_DIR = path.resolve('web/content/articles');
+const SOURCES_FILE = path.resolve('web/content/sources.json');
 const OUT_DIR = path.resolve('web/dist');
+
+async function loadSources() {
+  try {
+    const raw = await fs.readFile(SOURCES_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {}
+
+  return [];
+}
 
 async function listMarkdown(dir) {
   let results = [];
@@ -74,19 +85,56 @@ function inlineMarkdown(text){
   return text;
 }
 
+function detectSourceId(meta, sources){
+  const rawSource = (meta.source || '').toString().trim().toLowerCase();
+  if (rawSource && sources.some((source) => source.id === rawSource)) {
+    return rawSource;
+  }
+
+  let host = '';
+  try {
+    host = new URL(meta.sourceUrl || '').hostname.toLowerCase();
+  } catch {}
+
+  if (host) {
+    const matched = sources.find((source) =>
+      (source.domains || []).some((domain) => host === domain || host.endsWith(`.${domain}`)),
+    );
+    if (matched) return matched.id;
+  }
+
+  return 'other';
+}
+
+function sourceLabel(sourceId, meta, sources){
+  const configured = sources.find((source) => source.id === sourceId);
+  if (configured?.name) return configured.name;
+  if (meta.sourceName) return meta.sourceName;
+  return sourceId;
+}
+
 async function build(){
   await fs.mkdir(OUT_DIR, { recursive: true });
   const files = await listMarkdown(CONTENT_DIR).catch(()=>[]);
+  const sourcesConfig = await loadSources();
   const articles = [];
   for(const f of files){
     const raw = await fs.readFile(f, 'utf8');
     const { meta, body } = parseFrontmatter(raw);
     const html = renderMarkdown(body);
     const id = path.basename(f, '.md');
-    articles.push({ id, meta, html, raw });
+    const sourceId = detectSourceId(meta, sourcesConfig);
+    articles.push({ id, meta, html, raw, sourceId });
   }
 
-  const sources = Array.from(new Set(articles.map(a=>a.meta.publisher||'Unknown'))).sort();
+  const sourceIds = Array.from(new Set(articles.map((a) => a.sourceId)));
+  const configuredOptions = sourcesConfig
+    .filter((source) => sourceIds.includes(source.id))
+    .map((source) => ({ value: source.id, label: source.name }));
+  const fallbackOptions = sourceIds
+    .filter((id) => !sourcesConfig.some((source) => source.id === id))
+    .map((id) => ({ value: id, label: id }));
+  const sourceOptions = [...configuredOptions, ...fallbackOptions];
 
   const page = `<!doctype html>
 <html lang="zh-Hant">
@@ -105,15 +153,15 @@ async function build(){
 <body>
   <h1>News Fusion (single-file)</h1>
   <div class="controls">
-    <select id="sourceSelect"><option value="all">All sources</option>${sources.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('')}</select>
+    <select id="sourceSelect"><option value="all">All sources</option>${sourceOptions.map((source)=>`<option value="${escapeHtml(source.value)}">${escapeHtml(source.label)}</option>`).join('')}</select>
     <input id="q" class="search" placeholder="Search..." />
     <button id="refresh" onclick="location.reload()">Refresh</button>
   </div>
   <div id="count"></div>
   <div id="list">
-    ${articles.map(a=>`<div class="item" data-source="${escapeHtml(a.meta.publisher||'Unknown')}">
+    ${articles.map(a=>`<div class="item" data-source="${escapeHtml(a.sourceId)}">
       <h2>${escapeHtml(a.meta.title||a.id)}</h2>
-      <p style="color:#64748b">${escapeHtml(a.meta.publisher||'Unknown')} · ${escapeHtml(a.meta.publishedAt||'')}</p>
+      <p style="color:#64748b">${escapeHtml(sourceLabel(a.sourceId, a.meta, sourcesConfig))} · ${escapeHtml(a.meta.publishedAt||'')}</p>
       <div class="content">${a.html}</div>
       </div>`).join('\n')}
   </div>

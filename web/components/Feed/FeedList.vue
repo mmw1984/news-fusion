@@ -3,6 +3,7 @@ import Fuse from 'fuse.js';
 import sAgo from 's-ago';
 import dayjs from 'dayjs';
 import { DEFAULT_CATEGORY, isManualCategoryValid } from '~~/web/lib/manual-categories';
+import { getSourceNameById, MANUAL_SOURCES } from '~~/web/lib/manual-sources';
 import { getAllManualArticles } from '~~/web/lib/manual-feed';
 import type { Article } from '~~/web/lib/types';
 
@@ -34,11 +35,20 @@ const filteredArticles = computed(() => {
 });
 
 const sourceOptions = computed(() => {
-  const publishers = [...new Set(filteredArticles.value.map((a) => a.publisher))];
+  const sourceIds = [...new Set(filteredArticles.value.map((a) => a.source))];
+
+  const configured = MANUAL_SOURCES.filter((source) => sourceIds.includes(source.id)).map(
+    (source) => ({ label: source.name, value: source.id }),
+  );
+
+  const fallback = sourceIds
+    .filter((id) => !MANUAL_SOURCES.some((source) => source.id === id))
+    .map((id) => ({ label: getSourceNameById(id), value: id }));
 
   return [
     { label: 'All sources', value: 'all' },
-    ...publishers.map((publisher) => ({ label: publisher, value: publisher })),
+    ...configured,
+    ...fallback,
   ];
 });
 
@@ -46,7 +56,7 @@ const sourceFilteredArticles = computed(() => {
   if (sourceFilter.value === 'all') return filteredArticles.value;
 
   return filteredArticles.value.filter(
-    (article) => article.publisher === sourceFilter.value,
+    (article) => article.source === sourceFilter.value,
   );
 });
 

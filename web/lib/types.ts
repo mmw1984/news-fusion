@@ -6,6 +6,7 @@ export interface Article {
 	summary: string;
 	thumbnail: string | null;
 	category: string;
+	source: string;
 	publishedAt: string;
 	createdAt: string;
 	publisher: string;

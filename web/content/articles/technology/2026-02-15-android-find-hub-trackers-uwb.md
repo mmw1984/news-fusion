@@ -14,11 +14,19 @@ One of the key marketing points of the Apple AirTag is "Precision Finding," whic
 
 Apple's AirTag has set the standard for item trackers with its Precision Finding feature, powered by Ultra-Wideband (UWB) technology. This allows users to pinpoint the exact location of their lost items with directional guidance and distance measurements far more accurate than traditional Bluetooth can provide.
 
+![Technical comparison of UWB vs Bluetooth tracking capabilities in Android Find Hub and Apple AirTag systems](/assets/images/articles/android-find-hub-uwb-comparison.png)
+
+*Comparison of UWB-enabled precision tracking versus traditional Bluetooth-based location finding*
+
 However, when looking at the Android ecosystem's Find My Device network and compatible trackers, UWB support is notably absent from most devices. While Android's Find Hub has been expanding with third-party tracker support, the lack of UWB implementation raises questions about why this feature hasn't been widely adopted.
 
 ## Why Android Trackers Skip UWB
 
 There are several key reasons why Android Find Hub trackers continue to ignore Ultra-Wideband technology:
+
+![Infographic showing the key reasons why Android trackers don't support UWB technology](/assets/images/articles/uwb-android-reasons-infographic.png)
+
+*Key factors preventing widespread UWB adoption in Android Find Hub trackers*
 
 ### Hardware Limitations
 

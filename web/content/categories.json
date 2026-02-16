@@ -1,0 +1,8 @@
+[
+  { "id": "world", "name": "World" },
+  { "id": "business", "name": "Business" },
+  { "id": "technology", "name": "Technology" },
+  { "id": "product", "name": "Product" },
+  { "id": "software", "name": "Software" },
+  { "id": "politics", "name": "Politics" }
+]

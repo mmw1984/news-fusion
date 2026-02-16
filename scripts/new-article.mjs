@@ -1,14 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const allowedCategories = [
-	'world',
-	'business',
-	'technology',
-	'product',
-	'software',
-	'politics',
-];
+const categoriesPath = path.join(process.cwd(), 'web', 'content', 'categories.json');
+const categories = JSON.parse(fs.readFileSync(categoriesPath, 'utf8'));
+const allowedCategories = categories.map((category) => category.id);
 
 function parseArgs(argv) {
 	const args = {};

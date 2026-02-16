@@ -3,14 +3,9 @@ export interface ManualCategory {
 	name: string;
 }
 
-export const MANUAL_CATEGORIES: ManualCategory[] = [
-	{ id: 'world', name: 'World' },
-	{ id: 'business', name: 'Business' },
-	{ id: 'technology', name: 'Technology' },
-	{ id: 'product', name: 'Product' },
-	{ id: 'software', name: 'Software' },
-	{ id: 'politics', name: 'Politics' },
-];
+import categories from '~~/web/content/categories.json';
+
+export const MANUAL_CATEGORIES: ManualCategory[] = categories;
 
 export const DEFAULT_CATEGORY = MANUAL_CATEGORIES[0]!.id;
 

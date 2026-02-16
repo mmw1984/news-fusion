@@ -4,9 +4,12 @@ This repository now ships with a **frontend-only** workflow.
 
 This project is based on https://github.com/ckt1031/news-fusion
 
+Repository: https://github.com/mmw1984/news-fusion
+
 - No crawler required
 - No database required
 - No backend API required for article data
+- No automatic news fetching in web runtime
 
 All news entries are maintained manually via markdown files under `web/content/articles`.
 
@@ -15,7 +18,9 @@ All news entries are maintained manually via markdown files under `web/content/a
 - Data source migrated from server API to local markdown files
 - Category filtering remains available
 - Date filtering remains available
+- Source filtering remains available
 - Search remains available (Fuse.js)
+- In-page markdown reading (images + text) is available in each expanded item
 - Article source link and publisher information are shown in each item
 
 ## Markdown Format
@@ -37,6 +42,8 @@ thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475"
 summary: "A new open benchmark suggests that optimized smaller models are closing the performance gap while significantly reducing inference cost."
 ---
 Markdown content here.
+
+![Inline image example](https://example.com/image.jpg)
 ```
 
 ### Required Frontmatter Fields
@@ -62,6 +69,12 @@ If you update content very often, use the helper command to create a ready-to-ed
 npm run article:new -- --title "Your title" --category technology --sourceUrl "https://example.com/article" --sourceName "The Verge" --summary "Short summary"
 ```
 
+Positional mode (fast copy/paste):
+
+```bash
+npm run article:new -- Your title technology https://example.com/article TheVerge Short summary text
+```
+
 The command will:
 
 - auto-generate filename using date + slug
@@ -71,6 +84,12 @@ The command will:
 After creation, open the generated file in `web/content/articles/<category>/` and edit the markdown body.
 
 ## Supported Categories
+
+Edit categories directly in:
+
+`web/content/categories.json`
+
+Default values:
 
 - `world`
 - `business`
@@ -149,7 +168,7 @@ The workflow will:
 ### 3) Base path behavior
 
 - For `username.github.io` repository, base path is `/`
-- For project repository (for example `news-fusion-main`), base path is `/<repo-name>/`
+- For project repository (for example `news-fusion`), base path is `/<repo-name>/`
 
 This is handled automatically by the workflow using `NUXT_APP_BASE_URL`.
 
@@ -160,7 +179,7 @@ If you want to preview the same path behavior as project Pages locally:
 PowerShell:
 
 ```powershell
-$env:NUXT_APP_BASE_URL='/news-fusion-main/'; npm run nuxt:generate
+$env:NUXT_APP_BASE_URL='/news-fusion/'; npm run nuxt:generate
 ```
 
 Then serve `web/.output/public` with any static server.
@@ -169,3 +188,4 @@ Then serve `web/.output/public` with any static server.
 
 - Current crawler/database scripts are still present in the repo for legacy reference.
 - The web UI in this edition reads article content from local markdown only.
+- Repository ships with no seeded news entries; all news content is manually added by you.

@@ -7,13 +7,13 @@
     <div
         class="flex justify-center items-center flex-row text-zinc-500 dark:text-zinc-400 gap-3"
     >
-        <a href="/about">
+        <a href="https://mmw1984.com" target="_blank" rel="noopener noreferrer">
           About
         </a>
         <a href="/rss">
           RSS
         </a>
-        <a href="https://github.com/ckt1031" target="_blank">
+        <a href="https://github.com/mmw1984" target="_blank" rel="noopener noreferrer">
           Author
         </a>
     </div>

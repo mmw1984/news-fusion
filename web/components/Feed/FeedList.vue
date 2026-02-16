@@ -17,6 +17,7 @@ const category = computed(() => {
   return currentCategory;
 });
 const date = computed(() => route.params.date as string | undefined);
+const sourceFilter = ref<string>('all');
 
 const allArticles = computed(() => getAllManualArticles());
 
@@ -29,6 +30,23 @@ const filteredArticles = computed(() => {
 
   return byCategory.filter(
     (article) => dayjs(article.publishedAt).format('YYYY-MM-DD') === date.value,
+  );
+});
+
+const sourceOptions = computed(() => {
+  const publishers = [...new Set(filteredArticles.value.map((a) => a.publisher))];
+
+  return [
+    { label: 'All sources', value: 'all' },
+    ...publishers.map((publisher) => ({ label: publisher, value: publisher })),
+  ];
+});
+
+const sourceFilteredArticles = computed(() => {
+  if (sourceFilter.value === 'all') return filteredArticles.value;
+
+  return filteredArticles.value.filter(
+    (article) => article.publisher === sourceFilter.value,
   );
 });
 
@@ -49,7 +67,7 @@ const serverUpdatedAt = computed(() => {
 
 const input = ref('');
 const result = computed(() => {
-  const entries = filteredArticles.value as Article[];
+  const entries = sourceFilteredArticles.value as Article[];
 
 	const fuse = new Fuse(entries, {
 		threshold: 0.5,
@@ -72,9 +90,17 @@ const centerBox = 'flex flex-row gap-1.5 justify-center items-center h-32';
   <div v-if="filteredArticles.length > 0">
     <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
       <p class="text-zinc-700 dark:text-zinc-300 font-light">
-        Total: {{ filteredArticles.length }} articles
+        Total: {{ sourceFilteredArticles.length }} articles
       </p>
-      <div class="flex flex-row gap-2">
+      <div class="flex flex-col sm:flex-row gap-2">
+        <USelect
+            v-model="sourceFilter"
+            :items="sourceOptions"
+            class="w-52"
+            color="neutral"
+            variant="subtle"
+            title="Filter by source"
+        />
         <UInput
             icon="i-hugeicons-search-01"
             color="neutral"

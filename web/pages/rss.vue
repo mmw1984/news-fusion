@@ -6,7 +6,7 @@ useHead({
 	meta: [
 		{
 			name: 'description',
-            content: 'How to manage frontend-only markdown feed data',
+            content: 'How to manage frontend-only markdown content and source filtering',
 		},
 	],
 });
@@ -23,7 +23,7 @@ code {
 <template>
     <article class="flex flex-col gap-3 text-zinc-700 dark:text-zinc-400 pt-4 mb-10">
         <p>
-            This version is frontend-only. Articles are updated manually using markdown files.
+            This version is frontend-only. Articles are updated manually using markdown files only.
         </p>
         <p>
             Add or edit files in <code>web/content/articles/&lt;category&gt;/</code> and include frontmatter:
@@ -40,7 +40,10 @@ summary: "Short summary"
 Markdown content here.
         </pre>
         <p>
-            Supported categories:
+            There is no automatic crawler in this edition. You fully control article content, category, date, and source metadata.
+        </p>
+        <p>
+            Supported categories (editable in <code>web/content/categories.json</code>):
         </p>
         <ul class="list-disc list-inside flex flex-col gap-1">
             <li v-for="category in MANUAL_CATEGORIES" :key="category.id">
